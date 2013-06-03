@@ -7,6 +7,12 @@
 # All rights reserved - Do Not Redistribute
 #
 
+bash "install_something" do
+  user "root"
+  cwd "/tmp"
+  code "apt-get update"
+end
+
 apt_package "build-essential" do
   action :install
 end
