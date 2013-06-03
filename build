@@ -1,0 +1,18 @@
+#!/bin/sh
+
+make image PROFILE=WNDR3700 PACKAGES=" \
+block-mount \
+ip \
+iputils-traceroute6 \
+kmod-fs-ext4 \
+kmod-usb-storage \
+luci \
+luci-app-ddns \
+luci-app-qos \
+luci-app-samba \
+luci-app-upnp \
+luci-app-wol \
+luci-ssl \
+openvpn-easy-rsa \
+openvpn-openssl \
+"

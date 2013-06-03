@@ -1,0 +1,48 @@
+#!/bin/sh
+
+#set -x
+
+BUILD_DIR=/tmp/OpenWRT_build
+mkdir -pv $BUILD_DIR
+cd $BUILD_DIR
+
+# Set up to check the several build-bot architectures.
+export IBPKGI486="OpenWrt-ImageBuilder-ar71xx_generic-for-linux-i486"
+export IBPKGI686="OpenWrt-ImageBuilder-ar71xx_generic-for-linux-i686"
+export IBPKG64="OpenWrt-ImageBuilder-ar71xx_generic-for-linux-x86_64"
+
+echo "Retrieving latest OpenWRT image builder."
+wget -nv http://downloads.openwrt.org/snapshots/trunk/ar71xx/$IBPKGI486.tar.bz2 && IBPKG=$IBPKGI486 
+wget -nv http://downloads.openwrt.org/snapshots/trunk/ar71xx/$IBPKGI686.tar.bz2 && IBPKG=$IBPKGI686
+wget -nv http://downloads.openwrt.org/snapshots/trunk/ar71xx/$IBPKG64.tar.bz2 && IBPKG=$IBPKG64
+
+echo "BUnZip2 ImageBuilder files."
+bunzip2 $IBPKG.tar.bz2
+
+echo "DeTar ImageBuilder files."
+tar -xvf $IBPKG.tar
+
+echo "Remove Tar file."
+rm -f $IBPKG.tar
+
+echo "Place build script."
+cp /vagrant/build $IBPKG
+
+# echo "Build AR71xx images."
+cd $IBPKG && ./build
+
+RETVAL=$?
+[ $RETVAL -eq 0 ] && cp bin/ar71xx/openwrt-ar71xx-generic-wndr3700-squashfs-sysupgrade.bin /vagrant
+[ $RETVAL -ne 0 ] && echo Build Failed
+
+# If you're feeling lucky, push the new firmware to a router and upagrade.
+#   NOTE: assumes home is mounted to USB and has approximately 5MB of space.
+
+# load ssh key
+# ssh-add ~/.ssh/id_rsa
+
+# echo "Push WNDR3700 image to device."
+# scp ~/OpenWRT_New/$IBPKG/bin/ar71xx/openwrt-ar71xx-generic-wndr3700-squashfs-sysupgrade.bin root@device:/home/update
+
+# echo "Run firmware upgrade on device."
+# ssh root@device '/sbin/sysupgrade -v /home/update/openwrt-ar71xx-generic-wndr3700-squashfs-sysupgrade.bin'
