@@ -1,0 +1,34 @@
+#!/bin/sh
+
+BUILD_DIR=<%= @build_target_dir %>
+mkdir -pv $BUILD_DIR
+cd $BUILD_DIR
+
+# Set up to check the several build-bot architectures.
+export IBPKGI486="OpenWrt-ImageBuilder-<%= @firmware_image_builder %>-for-linux-i486"
+export IBPKGI686="OpenWrt-ImageBuilder-<%= @firmware_image_builder %>-for-linux-i686"
+export IBPKG64="OpenWrt-ImageBuilder-<%= @firmware_image_builder %>-for-linux-x86_64"
+
+echo "Retrieving latest OpenWRT image builder."
+wget -nv http://downloads.openwrt.org/snapshots/trunk/<%= @firmware_platform %>/$IBPKGI486.tar.bz2 && IBPKG=$IBPKGI486 
+wget -nv http://downloads.openwrt.org/snapshots/trunk/<%= @firmware_platform %>/$IBPKGI686.tar.bz2 && IBPKG=$IBPKGI686
+wget -nv http://downloads.openwrt.org/snapshots/trunk/<%= @firmware_platform %>/$IBPKG64.tar.bz2 && IBPKG=$IBPKG64
+
+echo "BUnZip2 ImageBuilder files."
+bunzip2 $IBPKG.tar.bz2
+
+echo "DeTar ImageBuilder files."
+tar -xvf $IBPKG.tar
+
+echo "Remove Tar file."
+rm -f $IBPKG.tar
+
+echo "Place build script."
+cp /vagrant/build $IBPKG
+
+# echo "Build <%= @firmware_platform %> images."
+cd $IBPKG && ./build
+
+RETVAL=$?
+[ $RETVAL -eq 0 ] && cp bin/<%= @firmware_platform %>/<%= @firmware_file %> /vagrant
+[ $RETVAL -ne 0 ] && echo Build Failed

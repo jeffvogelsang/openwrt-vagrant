@@ -1,0 +1,11 @@
+# If you're feeling lucky, push the new firmware to a router and upagrade.
+#   NOTE: assumes home is mounted to USB and has approximately 5MB of space.
+
+# load ssh key
+ssh-add <%= @ssh_key %>
+
+# echo "Push <%= @firmware_model %> image to device."
+scp ~/OpenWRT_New/$IBPKG/bin/<%= @firmware_platform %>/openwrt-<%= @firmware_image_builder %>-<%= @firmware_model %>-squashfs-sysupgrade.bin <%= @user %>@<%= @host %>:/home/update
+
+# echo "Run firmware upgrade on device."
+ssh <%= @user %>@<%= @host %> '/sbin/sysupgrade -v /home/update/openwrt-<%= @firmware_image_builder %>-<%= @firmware_model %>-squashfs-sysupgrade.bin'
