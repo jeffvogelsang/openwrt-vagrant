@@ -1,6 +1,6 @@
 #!/bin/sh
 
-make image PROFILE=<%= @profile %>" \
+make image PROFILE=<%= @profile %> PACKAGES=" \
 <% @packages.each do |package| -%>
 <%= package %> \
 <% end -%>
