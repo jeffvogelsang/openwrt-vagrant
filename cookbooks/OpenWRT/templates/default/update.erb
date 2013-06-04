@@ -24,7 +24,7 @@ echo "Remove Tar file."
 rm -f $IBPKG.tar
 
 echo "Place build script."
-cp /vagrant/build $IBPKG
+cp /openwrt/build $IBPKG
 
 # echo "Build <%= @firmware_platform %> images."
 cd $IBPKG && ./build
