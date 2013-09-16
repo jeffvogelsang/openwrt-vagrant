@@ -29,6 +29,7 @@ default["OpenWRT"]["packages"] = %w(
 	luci-app-samba
 	luci-app-upnp
 	luci-app-wol
+	luci-proto-ipv6
 	luci-ssl
 	openvpn-easy-rsa
 	openvpn-openssl
